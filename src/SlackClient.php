@@ -26,6 +26,7 @@ class SlackClient extends \yii\base\BaseObject
         return parent::init();
     }
     /**
+     * get http client
      * 
      * @return Client
      */
@@ -37,11 +38,22 @@ class SlackClient extends \yii\base\BaseObject
         return $this->_client;
     }
     
+    /**
+     * set client webhook url
+     * @param array $urls
+     */
     public function setWebHookUrls(Array $urls)
     {
         $this->_webhookUrls = $urls;
     }
     
+    /**
+     * set channel key
+     * 
+     * @param string $name
+     * @return $this
+     * @throws \yii\base\InvalidConfigException
+     */
     public function setChannel($name)
     {
         if (!isset($this->_webhookUrls[$name])) {
@@ -74,11 +86,25 @@ class SlackClient extends \yii\base\BaseObject
         return $this->getClient()->post($this->_channel, $payload)->send();
     }
     
+    /**
+     * 
+     * @param string $text
+     * @param array $payload
+     * @return boolean
+     */
     public function sendText($text, $payload = [])
     {
         return $this->send(array_merge($payload, ['text' => $text]));
     }
     
+    /**
+     * helper mapping attribute label and value from model
+     * 
+     * @param BaseActiveRecord $model
+     * @param array $attributes
+     * @param boolean $short
+     * @return array
+     */
     public static function fieldsAttribute(BaseActiveRecord $model, $attributes = [], $short = true)
     {
         $attributes = $attributes ? : $model->attributes();

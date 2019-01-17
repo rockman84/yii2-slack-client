@@ -7,7 +7,18 @@ use yii\log\Target;
 
 class SlackTarget extends Target
 {   
+    /**
+     * set channel key
+     * 
+     * @var string
+     */
     public $channel = 'general';
+    
+    /**
+     * set name component application
+     * 
+     * @var string
+     */
     public $componentName = 'message';
     
     public function init() {
