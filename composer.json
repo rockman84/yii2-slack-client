@@ -1,5 +1,5 @@
 {
-    "name": "rockman84/yii2-slack-client",
+    "name": "sky/yii2-slack-client",
     "description": "Yii2 slack client and error target",
     "type": "extension",
     "license": "Apache-2.0",
