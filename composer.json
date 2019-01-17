@@ -14,10 +14,9 @@
       "issues": "https://github.com/rockman84/yii2-slack-client/issues",
       "source": "https://github.com/rockman84/yii2-slack-client"
     },
-    "minimum-stability": "dev",
     "require": {
       "php": ">=5.6.0",
-      "yiisoft/yii2": ">=2.0.0",
+      "yiisoft/yii2": "~2.0.0",
       "yiisoft/yii2-httpclient": "^2.0.0"
     },
     "autoload": {
