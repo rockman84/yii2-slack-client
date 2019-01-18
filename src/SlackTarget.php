@@ -35,9 +35,24 @@ class SlackTarget extends Target
         if (Yii::$app instanceof \yii\web\Application) {
             $fields = [
                 [
-                    'title' => 'User',
-                    'value' => !Yii::$app->user->isGuest ? Yii::$app->user->identity->email : '-',
+                    'title' => 'User Email',
+                    'value' => !Yii::$app->user->isGuest ? Yii::$app->user->identity->email : 'Guest User',
                     'short' => false,
+                ],
+                [
+                    'title' => 'Remote IP',
+                    'value' => Yii::$app->request->remoteIP,
+                    'short' => true,
+                ],
+                [
+                    'title' => 'User Agent',
+                    'value' => Yii::$app->request->userAgent,
+                    'short' => true,
+                ],
+                [
+                    'title' => 'Server Name',
+                    'value' => Yii::$app->request->serverName,
+                    'short' => true,
                 ],
                 [
                     'title' => 'Url',
