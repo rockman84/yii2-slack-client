@@ -102,5 +102,6 @@ class SlackTarget extends Target
             'value' => YII_DEBUG,
             'short' => true
         ];
+        return $fields;
     }
 }
