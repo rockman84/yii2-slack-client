@@ -1,5 +1,5 @@
 <?php
-namespace app\components\behaviors;
+namespace sky\slack;
 
 use Yii;
 use sky\slack\SlackClient;
