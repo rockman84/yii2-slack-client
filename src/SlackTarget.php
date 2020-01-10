@@ -24,6 +24,13 @@ class SlackTarget extends Target
      */
     public $componentName = 'message';
     
+    /**
+     * enable send via queue
+     * 
+     * @var boolean
+     */
+    public $enableQueue = false;
+    
     public function init() {
         if (!Yii::$app->{$this->componentName} instanceof \sky\slack\SlackClient) {
             throw new \yii\base\InvalidConfigException("component {$this->componentName} not set");
@@ -35,7 +42,7 @@ class SlackTarget extends Target
     {
         $text = implode("\n", array_map([$this, 'formatMessage'], $this->messages)) . "\n";
         
-        Yii::$app->{$this->componentName}->setChannel($this->channel)->send([
+        $data = [
             'text' => "ERROR LEVEL {$this->levels} - " . Yii::$app->name,
             'attachments' => [
                 [
@@ -44,7 +51,14 @@ class SlackTarget extends Target
                     'fields' => $this->fields,
                 ]
             ]
-        ]);
+        ];
+        $slack = Yii::$app->{$this->componentName}->setChannel($this->channel);
+        
+        if ($this->queue && $this->enableQueue) {
+            $slack->pushQueue($data);
+        } else {
+            $slack->send($data);
+        }
     }
     
     public function getFields()

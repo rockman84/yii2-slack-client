@@ -13,11 +13,18 @@ use yii\helpers\ArrayHelper;
 class SlackClient extends \yii\base\BaseObject
 {
     public $clientClass = 'yii\httpclient\Client';
+    
     public $clientOptions = [];
+    
     public $defaultPayload = [];
+    
     public $defaultChannel = 'general';
+    
     public $testerChannel = 'tester';
+    
     public $offline = false;
+    
+    public $queue = 'queue';
     
     private $_webhookUrls = [];
     private $_channel;
@@ -119,6 +126,19 @@ class SlackClient extends \yii\base\BaseObject
     public function sendText($text, $payload = [])
     {
         return $this->send(array_merge($payload, ['text' => $text]));
+    }
+    
+    public function pushQueue($options, $delay = null, $priority = null,  $ttr = null)
+    {
+        /* @var $queue \yii\queue\db\Queue */
+        $queue = Yii::$app->get($this->queue);
+        if (!$queue) {
+            throw new \yii\base\NotSupportedException("Queue system not avaliable");
+        }
+        return $queue->delay($delay)
+                ->priority($priority)
+                ->ttr($ttr)
+                ->push(new SlackWorkers(array_merge(['channel' => $this->_channel], $options)));
     }
     
     /**
