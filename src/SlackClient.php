@@ -7,6 +7,9 @@ use Yii;
 use yii\db\BaseActiveRecord;
 use yii\helpers\ArrayHelper;
 
+/**
+ * @property array $webHookUrls
+ */
 class SlackClient extends \yii\base\BaseObject
 {
     public $clientClass = 'yii\httpclient\Client';
@@ -45,6 +48,27 @@ class SlackClient extends \yii\base\BaseObject
     public function setWebHookUrls(Array $urls)
     {
         $this->_webhookUrls = $urls;
+    }
+    
+    /**
+     * get all webhooks url
+     * @return array
+     */
+    public function getWebHookUrls()
+    {
+        return $this->_webhookUrls;        
+    }
+    
+    /**
+     * add new webhook
+     * @param type $name
+     * @param type $url
+     * @return $this
+     */
+    public function addWebHook($name, $url)
+    {
+        $this->_webhookUrls[$name] = $url;
+        return $this;
     }
     
     /**
