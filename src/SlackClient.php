@@ -6,9 +6,10 @@ use yii\helpers\Json;
 use Yii;
 use yii\db\BaseActiveRecord;
 use yii\helpers\ArrayHelper;
+use yii\queue\Queue;
 
 /**
- * @property array $webHookUrls
+ * @property array $webhookUrls
  */
 class SlackClient extends \yii\base\BaseObject
 {
@@ -21,9 +22,24 @@ class SlackClient extends \yii\base\BaseObject
     public $defaultChannel = 'general';
     
     public $testerChannel = 'tester';
-    
+
+    /**
+     * enable or disable
+     * @var bool
+     */
+    public $enable = true;
+
+    /**
+     * @deprecated april 2021
+     * @see $enable
+     * @var bool
+     */
     public $offline = false;
-    
+
+    /**
+     * queue component name
+     * @var string
+     */
     public $queue = 'queue';
     
     private $_webhookUrls = [];
@@ -102,14 +118,17 @@ class SlackClient extends \yii\base\BaseObject
      *  'text' => 'Yout Text Here'
      * ]);
      * 
-     * @param array $payload
+     * @param array|string $payload
      * @return boolean
      */
     
     public function send($payload)
     {
-        if ($this->offline) {
+        if ($this->enable) {
             return true;
+        }
+        if (is_string($payload)) {
+            return $this->send(array_merge($payload, ['text' => $payload]));
         }
         $payload = [
             'payload' => Json::encode(array_merge($this->defaultPayload, $payload)),
@@ -118,7 +137,7 @@ class SlackClient extends \yii\base\BaseObject
     }
     
     /**
-     * 
+     * @deprecated april 2021
      * @param string $text
      * @param array $payload
      * @return boolean
@@ -132,7 +151,7 @@ class SlackClient extends \yii\base\BaseObject
     {
         /* @var $queue \yii\queue\db\Queue */
         $queue = Yii::$app->get($this->queue);
-        if (!$queue) {
+        if (!$queue instanceof Queue) {
             throw new \yii\base\NotSupportedException("Queue system not avaliable");
         }
         return $queue->delay($delay)
