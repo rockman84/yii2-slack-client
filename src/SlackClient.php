@@ -124,7 +124,7 @@ class SlackClient extends \yii\base\BaseObject
     
     public function send($payload)
     {
-        if ($this->enable) {
+        if (!$this->enable) {
             return true;
         }
         if (is_string($payload)) {
