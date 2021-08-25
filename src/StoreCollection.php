@@ -3,6 +3,9 @@ namespace sky\slack;
 
 use yii\helpers\ArrayHelper;
 
+/**
+ * @deprecated 21 aug 2021
+ */
 class StoreCollection extends \yii\base\BaseObject
 {
     protected $_store = [];
