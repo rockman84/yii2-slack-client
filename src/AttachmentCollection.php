@@ -4,6 +4,7 @@ namespace sky\slack;
 use yii\helpers\ArrayHelper;
 
 /**
+ * @deprecated 24 aug 2021
  * @property StoreCollection $textStore
  * @property StoreCollection $fieldsStore
  */

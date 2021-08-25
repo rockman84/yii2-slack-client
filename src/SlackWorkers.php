@@ -2,8 +2,9 @@
 namespace sky\slack;
 
 use Yii;
+use yii\queue\RetryableJobInterface;
 
-class SlackWorkers extends \yii\base\BaseObject implements \yii\queue\JobInterface
+class SlackWorkers extends \yii\base\BaseObject implements RetryableJobInterface
 {
     public $text;
     
@@ -18,5 +19,15 @@ class SlackWorkers extends \yii\base\BaseObject implements \yii\queue\JobInterfa
         }
         $slack->sendText($text, $this->payload);
         
+    }
+
+    public function getTtr()
+    {
+        return 60 * 5;
+    }
+
+    public function canRetry($attempt, $error)
+    {
+        return $attempt <= 5;
     }
 }

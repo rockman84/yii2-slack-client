@@ -16,12 +16,18 @@ class SlackClient extends \yii\base\BaseObject
     public $clientClass = 'yii\httpclient\Client';
     
     public $clientOptions = [];
-    
+
+    /**
+     * @deprecated 25 aug 2021
+     * @var array
+     */
     public $defaultPayload = [];
     
     public $defaultChannel = 'general';
     
     public $testerChannel = 'tester';
+
+    public $debugChannel = false;
 
     /**
      * enable or disable
@@ -106,10 +112,9 @@ class SlackClient extends \yii\base\BaseObject
         if (!isset($this->_webhookUrls[$name])) {
             throw new \yii\base\InvalidConfigException($name . ' channel not exsist');
         }
-        if (YII_ENV == 'dev') {
-            $name = $this->testerChannel;
-        }
-        $this->_channel = $this->_webhookUrls[$name];
+        $url = $this->getWebhookUrl($this->debugChannel ? : $name);
+
+        $this->_channel = $url;
         return $this;
     }
     
@@ -131,7 +136,7 @@ class SlackClient extends \yii\base\BaseObject
             return $this->send(array_merge($payload, ['text' => $payload]));
         }
         $payload = [
-            'payload' => Json::encode(array_merge($this->defaultPayload, $payload)),
+            'payload' => Json::encode($payload),
         ];
         return $this->getClient()->post($this->_channel, $payload)->send();
     }
@@ -162,7 +167,7 @@ class SlackClient extends \yii\base\BaseObject
     
     /**
      * helper mapping attribute label and value from model
-     * 
+     * @deprecated 24 aug 2021
      * @param BaseActiveRecord $model
      * @param array $attributes
      * @param boolean $short
@@ -181,6 +186,16 @@ class SlackClient extends \yii\base\BaseObject
             ];
         }
         return $fields;
+    }
+
+    public function create()
+    {
+        return new SlackBuilder(['client' => $this]);
+    }
+
+    protected function getWebhookUrl($name)
+    {
+        return ArrayHelper::getValue($this->_webhookUrls, $name, false);
     }
 
 }

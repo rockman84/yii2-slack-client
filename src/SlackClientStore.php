@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 use sky\slack\StoreCollection;
 
 /**
+ * @deprecated 21 aug 2021
  * @property StoreCollection $attachStore
  */
 class SlackClientStore extends \sky\slack\SlackClient
