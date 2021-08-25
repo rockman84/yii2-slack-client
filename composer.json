@@ -1,0 +1,27 @@
+{
+    "name": "sky/yii2-slack-client",
+    "description": "Yii2 slack client and error target",
+    "type": "yii2-extension",
+    "license": "Apache-2.0",
+    "authors": [
+		{
+			"name": "Hansen Wong",
+			"email": "huanghanzen@gmail.com",
+			"role": "Developer"
+		}
+	],
+    "support": {
+      "issues": "https://github.com/rockman84/yii2-slack-client/issues",
+      "source": "https://github.com/rockman84/yii2-slack-client"
+    },
+    "require": {
+      "php": ">=5.6.0",
+      "yiisoft/yii2": "~2.0.0",
+      "yiisoft/yii2-httpclient": "^2.0.0"
+    },
+    "autoload": {
+      "psr-4": {
+        "sky\\slack\\": "src/"
+      }
+    }
+}
