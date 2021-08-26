@@ -1,9 +1,11 @@
 <?php
 namespace sky\slack;
 
+use sky\slack\blocks\SectionBlock;
 use yii\base\InvalidCallException;
 use yii\helpers\ArrayHelper;
 use sky\slack\BaseBlock;
+use Yii;
 
 /**
  * https://api.slack.com/reference/surfaces/formatting
@@ -60,10 +62,21 @@ class SlackBuilder extends ParamBuilder
      */
     public function addHeaderBlock($text)
     {
-        $block = new BaseBlock(['type' => 'header']);
+        $block = $this->createBlock(BaseBlock::class, ['type' => 'header']);
         $block->setText($text, 'plain_text');
-        $this->addBlock($block);
         return $this;
+    }
+
+    /**
+     * @param string $class
+     * @param array $params
+     * @return SectionBlock
+     */
+    public function createBlock($class = SectionBlock::class, $params = [])
+    {
+        $block = new $class($params);
+        $this->addBlock($block);
+        return $block;
     }
 
     public function getParams()
