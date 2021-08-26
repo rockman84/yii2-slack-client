@@ -8,7 +8,9 @@ use sky\slack\BaseBlock;
 use Yii;
 
 /**
- * https://api.slack.com/reference/surfaces/formatting
+ * Builder Block Schema
+ * @see https://api.slack.com/reference/block-kit
+ * @see https://api.slack.com/reference/surfaces/formatting
  */
 class SlackBuilder extends ParamBuilder
 {
