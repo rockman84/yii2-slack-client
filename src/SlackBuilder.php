@@ -43,16 +43,27 @@ class SlackBuilder extends ParamBuilder
         return $this;
     }
 
+    /**
+     * add Divider
+     * @return $this
+     */
     public function addDividerBlock()
     {
         $this->addBlock(new BaseBlock());
+        return $this;
     }
 
+    /**
+     * add Header
+     * @param $text
+     * @return $this
+     */
     public function addHeaderBlock($text)
     {
         $block = new BaseBlock(['type' => 'header']);
         $block->setText($text, 'plain_text');
         $this->addBlock($block);
+        return $this;
     }
 
     public function getParams()
