@@ -14,9 +14,9 @@ class SectionBlock extends BaseBlock
 
     public $_fields = [];
 
-    public function addFields($text, $type = 'plain_text')
+    public function addFields($text, $type = 'plain_text', $emoji = true)
     {
-        $this->_fields[] = static::textObject($text, $type);
+        $this->_fields[] = static::textObject($text, $type, $emoji);
         return $this;
     }
 

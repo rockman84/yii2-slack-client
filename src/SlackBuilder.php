@@ -1,6 +1,7 @@
 <?php
 namespace sky\slack;
 
+use yii\base\InvalidCallException;
 use yii\helpers\ArrayHelper;
 use sky\slack\BaseBlock;
 
@@ -72,6 +73,9 @@ class SlackBuilder extends ParamBuilder
     public function send(SlackClient $slackClient = null)
     {
         $slackClient = $slackClient ? : $this->client;
+        if (!$slackClient instanceof SlackClient) {
+            throw new InvalidCallException('client must be SlackClient Instance');
+        }
         return $slackClient->send($this->getParams());
     }
 }

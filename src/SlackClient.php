@@ -188,7 +188,7 @@ class SlackClient extends \yii\base\BaseObject
         return $fields;
     }
 
-    public function create()
+    public function createBuilder()
     {
         return new SlackBuilder(['client' => $this]);
     }
