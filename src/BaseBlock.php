@@ -23,12 +23,17 @@ class BaseBlock extends ParamBuilder
 
     public function setText($text, $type = 'mrkdwn', $emoji = true)
     {
-        $this->setParams('text', [
-            'type' => 'plain_text',
-            'text' => $text,
-            'emoji' => $emoji,
-        ]);
+        $this->setParams('text', static::textObject($text, $type, $emoji));
         return $this;
+    }
+
+    protected static function textObject($text, $type = 'plain_text', $emoji = true)
+    {
+        return [
+            'text' => $text,
+            'type' => $type,
+            'emoji' => $emoji,
+        ];
     }
 
     public function getParams()

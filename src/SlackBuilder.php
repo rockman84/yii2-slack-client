@@ -2,6 +2,7 @@
 namespace sky\slack;
 
 use yii\helpers\ArrayHelper;
+use sky\slack\BaseBlock;
 
 /**
  * https://api.slack.com/reference/surfaces/formatting
@@ -43,7 +44,14 @@ class SlackBuilder extends ParamBuilder
 
     public function addDividerBlock()
     {
-        $this->addBlock(new BaseBlock(['parent' => $this]));
+        $this->addBlock(new BaseBlock());
+    }
+
+    public function addHeaderBlock($text)
+    {
+        $block = new BaseBlock(['type' => 'header']);
+        $block->setText($text, 'plain_text');
+        $this->addBlock($block);
     }
 
     public function getParams()
