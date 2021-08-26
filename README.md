@@ -68,7 +68,7 @@ $builder->setText('Hello World');
 
 // add Blocks
 $builder->addHeaderBlock(['text' => 'Helllo']);
-$slack->addDividerBlock();
+$builder->addDividerBlock();
 
 $sectionBlock = new SectionBlock(['text' => 'this is object block']);
 $builder->addBlock($section);
