@@ -27,7 +27,7 @@ class SlackTarget extends Target
     public $componentName = 'message';
 
     /**
-     * @var function
+     * @var callable
      */
     public $filterLog;
     
@@ -53,19 +53,24 @@ class SlackTarget extends Target
                 return;
             }
         }
+        $builder = $this->slack->createBuilder();
+
+
+
         $text = implode("\n", array_map([$this, 'formatMessage'], $this->messages)) . "\n";
+
+
         
         $data = [
             'text' => "ERROR LEVEL {$this->levels} - " . Yii::$app->name,
             'attachments' => [
                 [
                     'color' => "#ff0000",
-                    'text' => $text,
+                    'text' => json_encode($this->messages),
                     'fields' => $this->fields,
                 ]
             ]
         ];
-
         $this->slack->send($data);
     }
 
