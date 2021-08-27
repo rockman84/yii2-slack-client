@@ -72,7 +72,7 @@ class BaseBlock extends ParamBuilder
      * @param null $emoji
      * @return array
      */
-    protected static function textObject($text, $type = 'plain_text', $emoji = null)
+    public static function textObject($text, $type = 'plain_text', $emoji = null)
     {
         $textobj =  [
             'text' => $text,

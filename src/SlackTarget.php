@@ -3,10 +3,12 @@
 namespace sky\slack;
 
 use Yii;
+use yii\base\InvalidCallException;
 use yii\log\Target;
 
 /**
  * @property array $fields
+ * @property SlackClient $slack
  */
 class SlackTarget extends Target
 {   
@@ -23,10 +25,15 @@ class SlackTarget extends Target
      * @var string
      */
     public $componentName = 'message';
+
+    /**
+     * @var function
+     */
+    public $filterLog;
     
     /**
      * enable send via queue
-     * 
+     * @deprecated 27 aug 2021
      * @var boolean
      */
     public $enableQueue = false;
@@ -40,6 +47,12 @@ class SlackTarget extends Target
 
     public function export()
     {
+        if (is_callable($this->filterLog)) {
+            $filter = call_user_func_array($this->filterLog, [Yii::$app, $this]);
+            if (!$filter) {
+                return;
+            }
+        }
         $text = implode("\n", array_map([$this, 'formatMessage'], $this->messages)) . "\n";
         
         $data = [
@@ -52,13 +65,17 @@ class SlackTarget extends Target
                 ]
             ]
         ];
-        $slack = Yii::$app->{$this->componentName}->setChannel($this->channel);
-        
-        if ($this->queue && $this->enableQueue) {
-            $slack->pushQueue($data);
-        } else {
-            $slack->send($data);
+
+        $this->slack->send($data);
+    }
+
+    public function getSlack()
+    {
+        $slack = Yii::$app->get($this->componentName);
+        if ($slack instanceof SlackClient) {
+            return $slack;
         }
+        throw new InvalidCallException('Slack Component must instance Slack Client');
     }
     
     public function getFields()
@@ -114,6 +131,11 @@ class SlackTarget extends Target
         $fields[] = [
             'title' => 'Debug Model',
             'value' => YII_DEBUG,
+            'short' => true
+        ];
+        $fields[] = [
+            'title' => 'App ID',
+            'value' => Yii::$app->id,
             'short' => true
         ];
         return $fields;
