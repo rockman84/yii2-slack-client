@@ -1,10 +1,10 @@
 <?php
 namespace sky\slack;
 
+use sky\slack\BaseBlock;
 use sky\slack\blocks\SectionBlock;
 use yii\base\InvalidCallException;
 use yii\helpers\ArrayHelper;
-use sky\slack\BaseBlock;
 use Yii;
 
 /**
@@ -16,11 +16,8 @@ class SlackBuilder extends ParamBuilder
     public $channelName;
 
     public $client;
-
-    protected $_params = [
-        'text' => null,
-        'mrkdwn' => true,
-    ];
+    
+    protected $_params = [];
 
     /**
      * @var BaseBlock[]
@@ -28,11 +25,19 @@ class SlackBuilder extends ParamBuilder
      */
     protected $_blocks = [];
 
-    public function setText($text)
+    /**
+     * set Text
+     * @param $text
+     * @param string $type
+     * @param null $emoji
+     * @return $this
+     */
+    public function setText($text, $type = 'mrkdwn', $emoji = null)
     {
-        ArrayHelper::setValue($this->_params, 'text', $text);
+        $this->_params = ArrayHelper::merge($this->_params, BaseBlock::textObject($text, $type, $emoji));
         return $this;
     }
+
     /**
      * @see https://api.slack.com/reference/block-kit/blocks
      * @param $id
