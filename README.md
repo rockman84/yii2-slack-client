@@ -6,7 +6,7 @@ php composer.phar require sky/yii2-slack-client "*"
 ```
 or add in composer.json
 ```
-"sky/yii2-slack-client" : "@dev"
+"sky/yii2-slack-client" : "*"
 ```
 
 ## Set Client Configuration
@@ -63,7 +63,12 @@ Yii::$app->message->send([
 ```
 ## Slack Builder
 ```phpt
+
 $builder = Yii::$app->message->createBuilder();
+// or 
+$builder = new SlackBuilder();
+
+// set text
 $builder->setText('Hello World');
 
 // add Blocks
