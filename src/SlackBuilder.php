@@ -13,7 +13,7 @@ use Yii;
  */
 class SlackBuilder extends ParamBuilder
 {
-    public $channelName;
+    public $channel;
 
     public $client;
     
@@ -106,6 +106,11 @@ class SlackBuilder extends ParamBuilder
         if (!$slackClient instanceof SlackClient) {
             throw new InvalidCallException('client must be SlackClient Instance');
         }
+
+        if ($this->channel) {
+            $slackClient->setChannel($this->channel);
+        }
+
         return $slackClient->send($this->getParams());
     }
 }

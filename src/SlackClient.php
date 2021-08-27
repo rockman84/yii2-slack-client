@@ -18,7 +18,11 @@ class SlackClient extends \yii\base\BaseObject
     public $clientOptions = [];
     
     public $defaultChannel = 'general';
-    
+
+    /**
+     * @deprecated 27 aug 2021
+     * @var string
+     */
     public $testerChannel = 'tester';
 
     public $debugChannel = false;
@@ -189,11 +193,13 @@ class SlackClient extends \yii\base\BaseObject
 
     /**
      * create slack builder
+     * @param array $params
      * @return SlackBuilder
      */
-    public function createBuilder()
+    public function createBuilder($params = [])
     {
-        return new SlackBuilder(['client' => $this]);
+        $params['client'] = $this;
+        return new SlackBuilder($params);
     }
 
     /**
@@ -206,6 +212,12 @@ class SlackClient extends \yii\base\BaseObject
         return $builder->send($this);
     }
 
+    /**
+     * get Url Webhook
+     * @param $name
+     * @return mixed
+     * @throws \Exception
+     */
     protected function getWebhookUrl($name)
     {
         return ArrayHelper::getValue($this->_webhookUrls, $name, false);
