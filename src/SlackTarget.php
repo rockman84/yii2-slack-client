@@ -29,7 +29,7 @@ class SlackTarget extends Target
     /**
      * @var callable
      */
-    public $filterLog;
+    public $filterTarget;
     
     /**
      * enable send via queue
@@ -47,26 +47,21 @@ class SlackTarget extends Target
 
     public function export()
     {
-        if (is_callable($this->filterLog)) {
+        if (is_callable($this->filterTarget)) {
             $filter = call_user_func_array($this->filterLog, [Yii::$app, $this]);
             if (!$filter) {
                 return;
             }
         }
-        $builder = $this->slack->createBuilder();
-
-
 
         $text = implode("\n", array_map([$this, 'formatMessage'], $this->messages)) . "\n";
 
-
-        
         $data = [
             'text' => "ERROR LEVEL {$this->levels} - " . Yii::$app->name,
             'attachments' => [
                 [
                     'color' => "#ff0000",
-                    'text' => json_encode($this->messages),
+                    'text' => $text,
                     'fields' => $this->fields,
                 ]
             ]
