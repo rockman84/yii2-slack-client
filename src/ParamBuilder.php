@@ -4,6 +4,9 @@ namespace sky\slack;
 use sky\yii\helpers\ArrayHelper;
 use yii\base\BaseObject;
 
+/**
+ * @property array $params
+ */
 class ParamBuilder extends BaseObject
 {
     protected $_params = [];

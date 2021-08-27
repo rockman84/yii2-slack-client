@@ -16,12 +16,6 @@ class SlackClient extends \yii\base\BaseObject
     public $clientClass = 'yii\httpclient\Client';
     
     public $clientOptions = [];
-
-    /**
-     * @deprecated 25 aug 2021
-     * @var array
-     */
-    public $defaultPayload = [];
     
     public $defaultChannel = 'general';
     
@@ -41,6 +35,12 @@ class SlackClient extends \yii\base\BaseObject
      * @var bool
      */
     public $offline = false;
+
+    /**
+     * @deprecated 25 aug 2021
+     * @var array
+     */
+    public $defaultPayload = [];
 
     /**
      * queue component name
@@ -142,7 +142,6 @@ class SlackClient extends \yii\base\BaseObject
     }
     
     /**
-     * @deprecated april 2021
      * @param string $text
      * @param array $payload
      * @return boolean
@@ -188,9 +187,23 @@ class SlackClient extends \yii\base\BaseObject
         return $fields;
     }
 
-    public function create()
+    /**
+     * create slack builder
+     * @return SlackBuilder
+     */
+    public function createBuilder()
     {
         return new SlackBuilder(['client' => $this]);
+    }
+
+    /**
+     * send Builder
+     * @param SlackBuilder $builder
+     * @return bool
+     */
+    public function sendBuilder(SlackBuilder $builder)
+    {
+        return $builder->send($this);
     }
 
     protected function getWebhookUrl($name)

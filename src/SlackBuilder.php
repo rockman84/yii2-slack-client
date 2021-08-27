@@ -1,10 +1,15 @@
 <?php
 namespace sky\slack;
 
+use sky\slack\blocks\SectionBlock;
+use yii\base\InvalidCallException;
 use yii\helpers\ArrayHelper;
+use sky\slack\BaseBlock;
+use Yii;
 
 /**
- * https://api.slack.com/reference/surfaces/formatting
+ * Builder Block Schema
+ * @see https://api.slack.com/reference/block-kit
  */
 class SlackBuilder extends ParamBuilder
 {
@@ -41,9 +46,38 @@ class SlackBuilder extends ParamBuilder
         return $this;
     }
 
+    /**
+     * add Divider
+     * @return $this
+     */
     public function addDividerBlock()
     {
-        $this->addBlock(new BaseBlock(['parent' => $this]));
+        $this->addBlock(new BaseBlock());
+        return $this;
+    }
+
+    /**
+     * add Header
+     * @param $text
+     * @return $this
+     */
+    public function addHeaderBlock($text)
+    {
+        $block = $this->createBlock(BaseBlock::class, ['type' => 'header']);
+        $block->setText($text, 'plain_text');
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @param array $params
+     * @return SectionBlock
+     */
+    public function createBlock($class = SectionBlock::class, $params = [])
+    {
+        $block = new $class($params);
+        $this->addBlock($block);
+        return $block;
     }
 
     public function getParams()
@@ -64,6 +98,9 @@ class SlackBuilder extends ParamBuilder
     public function send(SlackClient $slackClient = null)
     {
         $slackClient = $slackClient ? : $this->client;
+        if (!$slackClient instanceof SlackClient) {
+            throw new InvalidCallException('client must be SlackClient Instance');
+        }
         return $slackClient->send($this->getParams());
     }
 }

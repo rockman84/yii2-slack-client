@@ -6,7 +6,7 @@ php composer.phar require sky/yii2-slack-client "*"
 ```
 or add in composer.json
 ```
-"sky/yii2-slack-client" : "@dev"
+"sky/yii2-slack-client" : "*"
 ```
 
 ## Set Client Configuration
@@ -14,7 +14,6 @@ or add in composer.json
 'message' => [
     'class' => 'sky\slack\SlackClient',
     'defaultChannel' => 'general',
-    'offline' => false,
     'webhookUrls' => [
         // channels web hook
         'general' => 'https://hooks.slack.com/services/[key]',
@@ -38,7 +37,7 @@ or add in composer.json
 ],
 ```
 
-## How to use
+## Basic how to use
 ```
 use sky\slack\SlackClient;
 use Yii;
@@ -61,6 +60,32 @@ Yii::$app->message->send([
         ]
     ],
 ]);
+```
+## Slack Builder
+```phpt
+
+$builder = Yii::$app->message->createBuilder();
+// or 
+$builder = new SlackBuilder();
+
+// set text
+$builder->setText('Hello World');
+
+// add Blocks
+$builder->addHeaderBlock(['text' => 'Helllo']);
+$builder->addDividerBlock();
+
+$sectionBlock = new SectionBlock(['text' => 'this is object block']);
+$builder->addBlock($section);
+
+// send builder
+$builder->send();
+
+// or
+$builder->send(Yii::$app->message);
+
+// or 
+Yii::$app->message->sendBuilder($builder);
 ```
 
 If this library is useful for you, say thanks [buying me a beer :beer:](https://www.paypal.me/huanghanzen)!
