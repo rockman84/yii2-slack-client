@@ -69,7 +69,10 @@ class SlackClient extends \yii\base\BaseObject
     public function getClient()
     {
         if (!$this->_client) {
-            $this->_client = Yii::createObject(array_merge(['class' => $this->clientClass], $this->clientOptions));
+            $this->_client = Yii::createObject(array_merge([
+                'class' => $this->clientClass,
+                'transport' => 'yii\httpclient\CurlTransport'
+            ], $this->clientOptions));
         }
         return $this->_client;
     }
