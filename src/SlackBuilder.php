@@ -62,6 +62,17 @@ class SlackBuilder extends ParamBuilder
     }
 
     /**
+     * add Text Section
+     * @param $text
+     */
+    public function addTextSectionBlock($text)
+    {
+        $this->createBlock()
+            ->setText($text);
+        return $this;
+    }
+
+    /**
      * add Header
      * @param $text
      * @return $this

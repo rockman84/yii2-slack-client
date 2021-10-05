@@ -1,6 +1,8 @@
 <?php
 namespace sky\slack;
 
+use sky\slack\blocks\SectionBlock;
+use yii\base\InvalidConfigException;
 use yii\httpclient\Client;
 use yii\helpers\Json;
 use Yii;
@@ -21,11 +23,16 @@ class SlackClient extends \yii\base\BaseObject
 
     /**
      * @deprecated 27 aug 2021
+     * @see SlackClient::$debugChannel
      * @var string
      */
     public $testerChannel = 'tester';
 
-    public $debugChannel = false;
+    /**
+     * debug channel name, if set all send in debug channel
+     * @var string|null
+     */
+    public $debugChannel = 'debug';
 
     /**
      * enable or disable
@@ -51,8 +58,17 @@ class SlackClient extends \yii\base\BaseObject
      * @var string
      */
     public $queue = 'queue';
-    
+
+    /**
+     * list of channels available
+     * @var array
+     */
     private $_webhookUrls = [];
+
+    /**
+     * channel name
+     * @var string
+     */
     private $_channel;
     
     protected $_client;
@@ -117,21 +133,29 @@ class SlackClient extends \yii\base\BaseObject
     public function setChannel($name)
     {
         if (!isset($this->_webhookUrls[$name])) {
-            throw new \yii\base\InvalidConfigException($name . ' channel not exsist');
+            throw new \yii\base\InvalidConfigException($name . ' channel not exist');
         }
-        $url = $this->getWebhookUrl($this->debugChannel ? : $name);
-
-        $this->_channel = $url;
+        $this->_channel = $name;
         return $this;
     }
-    
+
+    /**
+     * @return string
+     */
+    public function getChannel()
+    {
+        return $this->_channel;
+    }
+
     /**
      * Yii::$app->message->send([
      *  'text' => 'Yout Text Here'
      * ]);
-     * 
+     *
      * @param array|string $payload
-     * @return boolean
+     * @return \yii\httpclient\Response|boolean
+     * @throws \yii\httpclient\Exception
+     * @throws \Exception
      */
     
     public function send($payload)
@@ -142,10 +166,21 @@ class SlackClient extends \yii\base\BaseObject
         if (is_string($payload)) {
             return $this->send(array_merge($payload, ['text' => $payload]));
         }
+        if ($this->debugChannel) {
+            $builder = new SectionBlock(['text' => "*** This Sent on debug mode ***"]);
+            $builder->addField('Channel', $this->_channel);
+            $payload['blocks'][] = $builder->getParams();
+        }
         $payload = [
             'payload' => Json::encode($payload),
         ];
-        return $this->getClient()->post($this->_channel, $payload)->send();
+        $url = $this->getWebhookUrl($this->debugChannel ? : $this->_channel);
+        if (!$url) {
+            throw new InvalidConfigException("Channel {$this->_channel} not found");
+        }
+        return $this->getClient()
+            ->post($url, $payload)
+            ->send();
     }
     
     /**

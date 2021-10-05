@@ -20,6 +20,12 @@ class SectionBlock extends BaseBlock
         return $this;
     }
 
+    public function addField($label, $value)
+    {
+        $this->addFields("*{$label}* : \n {$value} ", 'mrkdwn');
+        return $this;
+    }
+
     public function getParams()
     {
         $params = parent::getParams();

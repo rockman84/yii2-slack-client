@@ -78,7 +78,7 @@ class BaseBlock extends ParamBuilder
             'text' => $text,
             'type' => $type,
         ];
-        $emoji && $textobj['emoji'] = $emoji;
+        $emoji && $type != 'mrkdwn' && $textobj['emoji'] = $emoji;
         return $textobj;
     }
 
