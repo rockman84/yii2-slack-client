@@ -167,8 +167,8 @@ class SlackClient extends \yii\base\BaseObject
             return $this->send(array_merge($payload, ['text' => $payload]));
         }
         if ($this->debugChannel) {
-            $builder = new SectionBlock(['text' => "*** This Sent on debug mode ***"]);
-            $builder->addField('Channel', $this->_channel);
+            $builder = new SectionBlock(['text' => "*** This sent on debug mode ***"]);
+            $builder->addField('Target Channel', $this->_channel);
             $payload['blocks'][] = $builder->getParams();
         }
         $payload = [
