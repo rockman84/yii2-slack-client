@@ -77,10 +77,10 @@ class SlackBuilder extends ParamBuilder
      * @param $text
      * @return $this
      */
-    public function addHeaderBlock($text)
+    public function addHeaderBlock($text, $type = 'plain_text')
     {
         $block = $this->createBlock(BaseBlock::class, ['type' => 'header']);
-        $block->setText($text, 'plain_text');
+        $block->setText($text, $type);
         return $this;
     }
 
@@ -89,7 +89,7 @@ class SlackBuilder extends ParamBuilder
      * @param array $params
      * @return SectionBlock
      */
-    public function createBlock($class = SectionBlock::class, $params = [])
+    public function createBlock(string $class = SectionBlock::class, array $params = [])
     {
         $block = new $class($params);
         $this->addBlock($block);

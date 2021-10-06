@@ -164,11 +164,12 @@ class SlackClient extends \yii\base\BaseObject
             return true;
         }
         if (is_string($payload)) {
-            return $this->send(array_merge($payload, ['text' => $payload]));
+            return $this->sendText($payload);
         }
         if ($this->debugChannel) {
             $builder = new SectionBlock(['text' => "*** This sent on debug mode ***"]);
-            $builder->addField('Target Channel', $this->_channel);
+            $builder->addField('Target Channel', $this->_channel)
+                ->addField('App Name', Yii::$app->name);
             $payload['blocks'][] = $builder->getParams();
         }
         $payload = [
@@ -190,7 +191,8 @@ class SlackClient extends \yii\base\BaseObject
      */
     public function sendText($text, $payload = [])
     {
-        return $this->send(array_merge($payload, ['text' => $text]));
+        $block = new SectionBlock(['text' => $text]);
+        return $this->send(array_merge($payload, ['text' => $text, 'blocks' => [$block->params]]));
     }
     
     public function pushQueue($options, $delay = null, $priority = null,  $ttr = null)

@@ -2,9 +2,12 @@
 
 namespace sky\slack;
 
+use sky\slack\blocks\SectionBlock;
 use Yii;
 use yii\base\InvalidCallException;
+use yii\console\Application;
 use yii\log\Target;
+use yii\web\User;
 
 /**
  * @property array $fields
@@ -30,7 +33,13 @@ class SlackTarget extends Target
      * @var callable
      */
     public $filterTarget;
-    
+
+    public $logVars = [
+        '_POST',
+        '_GET',
+        '_FILES',
+    ];
+
     /**
      * enable send via queue
      * @deprecated 27 aug 2021
@@ -53,20 +62,56 @@ class SlackTarget extends Target
                 return;
             }
         }
+        $title = Yii::$app->name . " Alert!";
+        $builder = $this->slack->createBuilder(['channel' => $this->channel]);
+        $builder->setText($title)
+            ->addHeaderBlock(Yii::$app->name . " Alert!")
+            ->addDividerBlock();
 
-        $text = implode("\n", array_map([$this, 'formatMessage'], $this->messages)) . "\n";
+        foreach ($this->messages as $message) {
+            $builder->createBlock()
+                ->setText($this->formatMessage($message));
+            $builder->addDividerBlock();
+        }
 
-        $data = [
-            'text' => "ERROR LEVEL {$this->levels} - " . Yii::$app->name,
-            'attachments' => [
-                [
-                    'color' => "#ff0000",
-                    'text' => $text,
-                    'fields' => $this->fields,
-                ]
-            ]
+        $baseData = [
+            'Controller Action' => Yii::$app->controller ? Yii::$app->controller->id . '/' . Yii::$app->controller->action->id : null,
+            'Application' => Yii::$app instanceof Application ? 'console' : 'web',
+            'App ID' => Yii::$app->id,
+            'Module' => Yii::$app->module ? Yii::$app->module->id : null,
         ];
-        $this->slack->send($data);
+        static::addFields($builder->createBlock(), $baseData);
+
+        if (Yii::$app instanceof \yii\web\Application) {
+            $request = Yii::$app->request;
+            $webData = [
+                'URL' => $_SERVER['REQUEST_URI'],
+                'Referrer' => $request->referrer,
+                'Remote IP' => $request->remoteIP,
+                'User Agent' => $request->userAgent,
+                'User Host' => $request->userHost,
+                'Auth User' => $request->authUser,
+                'Server Name' => $request->serverName,
+                'Server Port' => $request->port,
+                'Method / Is Ajax' => $request->method . '/' . Yii::$app->formatter->asBoolean(Yii::$app->request->isAjax),
+            ];
+            static::addFields($builder->createBlock(), $webData);
+
+        } elseif (Yii::$app instanceof Application)
+        {
+            $sectionFields->addField('URL', $_SERVER['REQUEST_URI'])
+                ->addField('Remote IP', Yii::$app->request->pathInfo);
+        }
+
+        if (Yii::$app->get('user') instanceof User) {
+            $user = Yii::$app->user;
+            $userBlock = $builder->createBlock()->addField('User ID', $user->id ? : 'Guest');
+            if ($user->identity && isset($user->identity->email)) {
+                $userBlock->addField('Email', $user->identity->email);
+            }
+        }
+
+        $builder->addDividerBlock()->send();
     }
 
     public function getSlack()
@@ -76,6 +121,13 @@ class SlackTarget extends Target
             return $slack;
         }
         throw new InvalidCallException('Slack Component must instance Slack Client');
+    }
+
+    protected static function addFields(SectionBlock $block, $params = [])
+    {
+        foreach ($params as $label => $value) {
+            $block->addField($label, "`" . ($value ? : "N/A") . "`");
+        }
     }
     
     public function getFields()
