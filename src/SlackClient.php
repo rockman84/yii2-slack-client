@@ -183,16 +183,17 @@ class SlackClient extends \yii\base\BaseObject
             ->post($url, $payload)
             ->send();
     }
-    
+
     /**
      * @param string $text
      * @param array $payload
      * @return boolean
+     * @throws \yii\httpclient\Exception
      */
     public function sendText($text, $payload = [])
     {
-        $block = new SectionBlock(['text' => $text]);
-        return $this->send(array_merge($payload, ['text' => $text, 'blocks' => [$block->params]]));
+        $builder = $this->createBuilder()->setText($text)->addTextSectionBlock($text);
+        return $this->send(array_merge($builder->getParams(), $payload));
     }
     
     public function pushQueue($options, $delay = null, $priority = null,  $ttr = null)
