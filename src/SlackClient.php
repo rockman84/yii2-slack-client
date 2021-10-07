@@ -12,13 +12,19 @@ use yii\queue\Queue;
 
 /**
  * @property array $webhookUrls
+ * @property string $channel
  */
 class SlackClient extends \yii\base\BaseObject
 {
     public $clientClass = 'yii\httpclient\Client';
     
     public $clientOptions = [];
-    
+
+    /**
+     * @deprecated 7 oct 2021
+     * @see SlackClient::$channel
+     * @var string
+     */
     public $defaultChannel = 'general';
 
     /**
