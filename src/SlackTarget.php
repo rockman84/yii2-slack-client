@@ -96,11 +96,6 @@ class SlackTarget extends Target
                 'Method / Is Ajax' => $request->method . '/' . Yii::$app->formatter->asBoolean(Yii::$app->request->isAjax),
             ];
             static::addFields($builder->createBlock(), $webData);
-
-        } elseif (Yii::$app instanceof Application)
-        {
-            $sectionFields->addField('URL', $_SERVER['REQUEST_URI'])
-                ->addField('Remote IP', Yii::$app->request->pathInfo);
         }
 
         if (Yii::$app->get('user') instanceof User) {
@@ -129,7 +124,11 @@ class SlackTarget extends Target
             $block->addField($label, "`" . ($value ? : "N/A") . "`");
         }
     }
-    
+
+    /**
+     * @deprecated 7 oct 2021
+     * @return array|array[]
+     */
     public function getFields()
     {
         $fields = [];
